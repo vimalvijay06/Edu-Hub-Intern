@@ -1,6 +1,7 @@
 package com.eduhub1.eduhub_backend1.controller;
 
 import com.eduhub1.eduhub_backend1.component.Course;
+import com.eduhub1.eduhub_backend1.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,56 +22,56 @@ public class CourseController {
         courseList.add(new Course("CS105", "Operating Systems", 4));
     }
     
-    @GetMapping("/courses")
+    @GetMapping("/search/get-courses")
     public ResponseEntity<List<Course>> getAllCourses() {
         return new ResponseEntity<>(courseList, HttpStatus.OK);
     }
     
-    @GetMapping("/course/{courseCode}")
-    public ResponseEntity<Course> getCourseByPathVariable(@PathVariable String courseCode) {
+    @GetMapping("/get-course/{code}")
+    public ResponseEntity<Course> getCourseByPathVariable(@PathVariable("code") String code) {
         for (Course course : courseList) {
-            if (course.getCourseCode().equals(courseCode)) {
+            if (course.getCourseCode().equals(code)) {
                 return ResponseEntity.ok(course);
             }
         }
-        return ResponseEntity.notFound().build();
+        throw new ResourceNotFoundException("Course", "courseCode", code);
     }
     
-    @GetMapping("/course")
-    public ResponseEntity<Course> getCourseByRequestParam(@RequestParam String courseCode) {
+    @GetMapping("/get-course")
+    public ResponseEntity<Course> getCourseByRequestParam(@RequestParam("code") String code) {
         for (Course course : courseList) {
-            if (course.getCourseCode().equals(courseCode)) {
+            if (course.getCourseCode().equals(code)) {
                 return ResponseEntity.ok(course);
             }
         }
-        return ResponseEntity.notFound().build();
+        throw new ResourceNotFoundException("Course", "courseCode", code);
     }
     
-    @PostMapping("/course")
+    @PostMapping("/create")
     public ResponseEntity<Course> createCourse(@RequestBody Course course) {
         courseList.add(course);
         return new ResponseEntity<>(course, HttpStatus.CREATED);
     }
     
-    @PutMapping("/course/{courseCode}")
-    public ResponseEntity<Course> updateCourse(@PathVariable String courseCode, @RequestBody Course updatedCourse) {
+    @PutMapping("/update/{code}")
+    public ResponseEntity<Course> updateCourse(@PathVariable("code") String code, @RequestBody Course updatedCourse) {
         for (int i = 0; i < courseList.size(); i++) {
-            if (courseList.get(i).getCourseCode().equals(courseCode)) {
+            if (courseList.get(i).getCourseCode().equals(code)) {
                 courseList.set(i, updatedCourse);
                 return ResponseEntity.ok(updatedCourse);
             }
         }
-        return ResponseEntity.notFound().build();
+        throw new ResourceNotFoundException("Course", "courseCode", code);
     }
     
-    @DeleteMapping("/course/{courseCode}")
-    public ResponseEntity<Void> deleteCourse(@PathVariable String courseCode) {
+    @DeleteMapping("/delete/{code}")
+    public ResponseEntity<Void> deleteCourse(@PathVariable("code") String code) {
         for (int i = 0; i < courseList.size(); i++) {
-            if (courseList.get(i).getCourseCode().equals(courseCode)) {
+            if (courseList.get(i).getCourseCode().equals(code)) {
                 courseList.remove(i);
                 return ResponseEntity.noContent().build();
             }
         }
-        return ResponseEntity.notFound().build();
+        throw new ResourceNotFoundException("Course", "courseCode", code);
     }
 }
