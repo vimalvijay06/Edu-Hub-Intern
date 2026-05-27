@@ -4,6 +4,9 @@ import com.eduhub1.eduhub_backend1.component.Student;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,5 +28,19 @@ public class StudentController {
         studentList.add(new Student(3, "Mike", "Johnson"));
         studentList.add(new Student(4, "Sarah", "Williams"));
         return new ResponseEntity<>(studentList, HttpStatus.OK);
+    }
+    
+    @GetMapping("/student/query")
+    public ResponseEntity<Student> getStudentByQuery(
+            @RequestParam int id,
+            @RequestParam String firstName,
+            @RequestParam String lastName) {
+        Student student = new Student(id, firstName, lastName);
+        return ResponseEntity.ok(student);
+    }
+    
+    @PostMapping("/student/create")
+    public ResponseEntity<Student> createStudent(@RequestBody Student student) {
+        return ResponseEntity.ok(student);
     }
 }
